@@ -1,0 +1,18 @@
+<!-- play ros topic and run save image node -->
+<launch>
+  <!-- <include file="$(find bluefox2)/launch/single_node.launch" /> -->
+  <node name="bag_play" pkg="rosbag" type="play" args="--clock /home/bdai/dataSets/BlueFox/26806344/2018-08-23-17-59-03.bag -l"/>
+
+  <arg name="compressed_image" default= "/mv_26806344/image_raw"/>
+  <arg name="converted_image" default="/camera/image_raw" />
+
+  <node name="image_converter" pkg="image_transport" type="republish" output="screen"
+        args="compressed in:=$(arg compressed_image) raw out:=$(arg converted_image)" />
+
+  <!-- <arg name="image_save_path" default="/home/bdai/catkin_ws/openSLAM_ws/src/calibration/output_images" /> -->
+  <node name="save_image" pkg="calibration" type="save_image.py" output="screen">
+    <param name="sub_image_topic" value="$(arg converted_image)" />
+    <!-- <param name="image_saved_path" value=" set you path to save image" /> -->
+  </node>
+  
+</launch>
